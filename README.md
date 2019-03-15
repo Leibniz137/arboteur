@@ -3,9 +3,14 @@ Arbritrages USDC on UniSwap
 # Algorithm
 ```
 if the uniprice of eth is high (compared to oracle)
+  sell the amount of eth needed to align eth uniprice with oracle
 
 if the uniprice of eth is low (compared to oracle)
+  buy the amount of eth needed to align eth uniprice with oracle
 ```
+
+## how much to buy or sell?
+
 
 # Invariants
 Trades are made only if there is more than 20$ profit
