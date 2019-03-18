@@ -21,7 +21,7 @@ class Exchange:
         self.contract = contract
 
     @property
-    def price(self):
+    def rate(self):
         """
         get current exchange rate per eth
         """
@@ -39,7 +39,7 @@ def main():
         abi = json.load(fp)
     dai_swap = w3.eth.contract(address=address, abi=abi)
     exchange = Exchange(dai_swap)
-    return exchange.price
+    return exchange.rate
 
 
 if __name__ == '__main__':
