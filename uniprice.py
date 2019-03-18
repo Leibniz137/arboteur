@@ -16,6 +16,18 @@ PROJECT_ID = '029890c5690243edbcb9fc201eb85164'
 PROVIDER_URL = f'https://mainnet.infura.io/v3/{PROJECT_ID}'
 
 
+class Exchange:
+    def __init__(self, contract):
+        self.contract = contract
+
+    @property
+    def price(self):
+        """
+        get current exchange rate per eth
+        """
+        return self.contract.functions.getEthToTokenInputPrice(1).call()
+
+
 def main():
     provider = Web3.HTTPProvider(PROVIDER_URL)
     w3 = Web3(provider)
@@ -26,7 +38,8 @@ def main():
     with json_path.open() as fp:
         abi = json.load(fp)
     dai_swap = w3.eth.contract(address=address, abi=abi)
-    return dai_swap.abi
+    exchange = Exchange(dai_swap)
+    return exchange.price
 
 
 if __name__ == '__main__':
