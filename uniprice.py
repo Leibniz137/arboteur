@@ -37,8 +37,8 @@ def main():
     json_path = Path(__file__).parent / 'exchangeABI.json'
     with json_path.open() as fp:
         abi = json.load(fp)
-    dai_swap = w3.eth.contract(address=address, abi=abi)
-    exchange = Exchange(dai_swap)
+    contract = w3.eth.contract(address=address, abi=abi)
+    exchange = Exchange(contract)
     return exchange.rate
 
 
