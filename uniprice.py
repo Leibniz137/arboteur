@@ -3,6 +3,9 @@ NOTE: requires Infura api key
 
 $ export WEB3_INFURA_API_KEY='...'
 """
+import json
+from pathlib import Path
+
 from web3 import Web3
 
 
@@ -19,8 +22,11 @@ def main():
     assert w3.isConnected()
 
     address = w3.toChecksumAddress(DAI_EXCHANGE_ADDR)
-    dai_swap = w3.eth.contract(address=address)
-    return dai_swap
+    json_path = Path(__file__).parent / 'exchangeABI.json'
+    with json_path.open() as fp:
+        abi = json.load(fp)
+    dai_swap = w3.eth.contract(address=address, abi=abi)
+    return dai_swap.abi
 
 
 if __name__ == '__main__':
