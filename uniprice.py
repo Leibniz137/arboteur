@@ -34,7 +34,7 @@ def main():
     assert w3.isConnected()
 
     address = w3.toChecksumAddress(DAI_EXCHANGE_ADDR)
-    json_path = Path(__file__).parent / 'exchangeABI.json'
+    json_path = Path(__file__).parent / 'daiExchangeABI.json'
     with json_path.open() as fp:
         abi = json.load(fp)
     contract = w3.eth.contract(address=address, abi=abi)
