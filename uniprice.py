@@ -10,7 +10,7 @@ from web3 import Web3
 
 
 DAI_EXCHANGE_ADDR = '0x09cabec1ead1c0ba254b09efb3ee13841712be14'
-FACTORY = '0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95'
+USDC_EXCHANGE_ADDR = '0x97deC872013f6B5fB443861090ad931542878126'
 
 PROJECT_ID = '029890c5690243edbcb9fc201eb85164'
 PROVIDER_URL = f'https://mainnet.infura.io/v3/{PROJECT_ID}'
@@ -33,8 +33,8 @@ def main():
     w3 = Web3(provider)
     assert w3.isConnected()
 
-    address = w3.toChecksumAddress(DAI_EXCHANGE_ADDR)
-    json_path = Path(__file__).parent / 'daiExchangeABI.json'
+    address = w3.toChecksumAddress(USDC_EXCHANGE_ADDR)
+    json_path = Path(__file__).parent / 'exchangeABI.json'
     with json_path.open() as fp:
         abi = json.load(fp)
     contract = w3.eth.contract(address=address, abi=abi)
