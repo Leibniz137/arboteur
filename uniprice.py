@@ -92,9 +92,9 @@ def main(exchange_addr):
     with json_path.open() as fp:
         abi = json.load(fp)
     contract = w3.eth.contract(address=address, abi=abi)
-    exchange = Exchange(contract)
-    print(calculate_pool(w3, contract))
-    return exchange.rate
+    (eth_reserve, token_reserve) = calculate_pool(w3, contract)
+    exchange_rate = get_eth_to_token_price(eth_reserve, token_reserve)
+    return exchange_rate
 
 
 if __name__ == '__main__':
