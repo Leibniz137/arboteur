@@ -78,7 +78,7 @@ def get_eth_to_token_price(eth_reserve, token_reserve):
     return rate if rate > 0 else 0
 
 
-def main(exchange_addr):
+def main(exchange_addr=USDC_EXCHANGE_ADDR):
     # api key doesn't seem to work/unnecessary under current security settings
     provider_secret = Path(__file__).parent / 'infura-provider-secret.txt'
     with provider_secret.open() as fp:
