@@ -79,10 +79,15 @@ def get_eth_to_token_price(eth_reserve, token_reserve):
 
 
 def main(exchange_addr):
+    # api key doesn't seem to work/unnecessary under current security settings
     provider_secret = Path(__file__).parent / 'infura-provider-secret.txt'
     with provider_secret.open() as fp:
         infura_api_key = fp.read().strip()
     os.environ['WEB3_INFURA_API_KEY'] = infura_api_key
+
+    # Use websocket provider to access events instead of http
+    # Http provider causes errors due to missing method:
+    #   "*** ValueError: {'code': -32601, 'message': 'The method eth_newFilter does not exist/is not available'}"   # noqa: E501
     # provider = Web3.HTTPProvider(HTTP_INFURA_PROVIDER_URL)
     provider = Web3.WebsocketProvider(WSS_INFURA_PROVIDER_URL)
     w3 = Web3(provider)
