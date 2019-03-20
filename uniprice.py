@@ -18,6 +18,7 @@ WSS_INFURA_PROVIDER_URL = f'wss://mainnet.infura.io/ws/v3/{PROJECT_ID}'
 
 PROVIDER_FEE_PERCENT = 0.003
 NUM_DAYS_BACK_TO_CALCULATE = 720
+USDC_TOKEN_DECIMALS = 6
 
 
 class Exchange:
@@ -33,9 +34,40 @@ class Exchange:
         return self.contract.functions.getEthToTokenInputPrice(1).call()
 
 
-def calculate_dataset():
-    for days_back in range(NUM_DAYS_BACK_TO_CALCULATE, -1, -1):
-        print(days_back)
+def calculate_pool(w3, contract):
+    current_eth_total = 0
+    current_token_total = 0
+    block_difference = 1000000
+
+    liquidity_adds = contract.events.AddLiquidity.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    for event in liquidity_adds:
+        eth = event['args']['eth_amount'] / 1e18
+        tokens = event['args']['token_amount'] / 10**USDC_TOKEN_DECIMALS
+        current_eth_total += eth
+        current_token_total += tokens
+
+    liquidity_removals = contract.events.RemoveLiquidity.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    for event in liquidity_removals:
+        eth = event['args']['eth_amount'] / 1e18
+        tokens = event['args']['token_amount'] / 10**USDC_TOKEN_DECIMALS
+        current_eth_total -= eth
+        current_token_total -= tokens
+
+    token_purchases = contract.events.TokenPurchase.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    for event in token_purchases:
+        eth = event['args']['eth_sold'] / 1e18
+        tokens = event['args']['tokens_bought'] / 10**USDC_TOKEN_DECIMALS
+        current_eth_total += eth
+        current_token_total -= tokens
+
+    eth_purchases = contract.events.EthPurchase.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    for event in eth_purchases:
+        eth = event['args']['eth_bought'] / 1e18
+        tokens = event['args']['tokens_sold'] / 10**USDC_TOKEN_DECIMALS
+        current_eth_total -= eth
+        current_token_total += tokens
+
+    return (current_eth_total, current_token_total)
 
 
 def get_eth_to_token_price(eth_reserve, token_reserve):
@@ -68,6 +100,7 @@ def main(exchange_addr):
         abi = json.load(fp)
     contract = w3.eth.contract(address=address, abi=abi)
     exchange = Exchange(contract)
+    print(calculate_pool(w3, contract))
     return exchange.rate
 
 
