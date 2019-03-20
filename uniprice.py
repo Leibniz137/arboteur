@@ -36,30 +36,31 @@ class Exchange:
 def calculate_pool(w3, contract):
     current_eth_total = 0
     current_token_total = 0
-    block_difference = 1000000
+    MARKET_CREATION_BLOCK = 7101817
+    events = contract.events
 
-    liquidity_adds = contract.events.AddLiquidity.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    liquidity_adds = events.AddLiquidity.createFilter(fromBlock=MARKET_CREATION_BLOCK).get_all_entries()   # noqa: E501
     for event in liquidity_adds:
         eth = event['args']['eth_amount'] / 1e18
         tokens = event['args']['token_amount'] / 10**USDC_TOKEN_DECIMALS
         current_eth_total += eth
         current_token_total += tokens
 
-    liquidity_removals = contract.events.RemoveLiquidity.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    liquidity_removals = events.RemoveLiquidity.createFilter(fromBlock=MARKET_CREATION_BLOCK).get_all_entries()   # noqa: E501
     for event in liquidity_removals:
         eth = event['args']['eth_amount'] / 1e18
         tokens = event['args']['token_amount'] / 10**USDC_TOKEN_DECIMALS
         current_eth_total -= eth
         current_token_total -= tokens
 
-    token_purchases = contract.events.TokenPurchase.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    token_purchases = events.TokenPurchase.createFilter(fromBlock=MARKET_CREATION_BLOCK).get_all_entries()   # noqa: E501
     for event in token_purchases:
         eth = event['args']['eth_sold'] / 1e18
         tokens = event['args']['tokens_bought'] / 10**USDC_TOKEN_DECIMALS
         current_eth_total += eth
         current_token_total -= tokens
 
-    eth_purchases = contract.events.EthPurchase.createFilter(fromBlock=w3.eth.blockNumber - block_difference).get_all_entries()   # noqa: E501
+    eth_purchases = events.EthPurchase.createFilter(fromBlock=MARKET_CREATION_BLOCK).get_all_entries()   # noqa: E501
     for event in eth_purchases:
         eth = event['args']['eth_bought'] / 1e18
         tokens = event['args']['tokens_sold'] / 10**USDC_TOKEN_DECIMALS
