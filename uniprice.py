@@ -70,7 +70,7 @@ def calculate_pool(w3, contract):
     return (current_eth_total, current_token_total)
 
 
-def get_eth_to_token_price(eth_reserve, token_reserve):
+def calculate_exchange_rate(eth_reserve, token_reserve):
     input_eth_with_fee = 1 - PROVIDER_FEE_PERCENT
     numerator = input_eth_with_fee * token_reserve
     denominator = eth_reserve + input_eth_with_fee
@@ -99,7 +99,7 @@ def main(exchange_addr=USDC_EXCHANGE_ADDR):
         abi = json.load(fp)
     contract = w3.eth.contract(address=address, abi=abi)
     (eth_reserve, token_reserve) = calculate_pool(w3, contract)
-    exchange_rate = get_eth_to_token_price(eth_reserve, token_reserve)
+    exchange_rate = calculate_exchange_rate(eth_reserve, token_reserve)
     return exchange_rate
 
 

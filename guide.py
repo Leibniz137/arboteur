@@ -16,6 +16,7 @@ UNISWAP_TRANSACTION_FEE = 0.003
 COINBASE_SPREAD = 0.005
 
 # assuming the total transaction amount > $200 to avoid flat fee
+# see: https://support.coinbase.com/customer/en/portal/articles/2109597-coinbase-pricing-fees-disclosures   # noqa: E501
 COINBASE_FEE = 0.0149
 
 TRANSACTION_FEE = UNISWAP_TRANSACTION_FEE + COINBASE_SPREAD + COINBASE_FEE
