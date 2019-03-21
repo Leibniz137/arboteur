@@ -26,7 +26,8 @@ def main():
     oracle_price = oracle.main()
     logging.info(f"oracle price: {oracle_price}")
 
-    exchange_rate = uniprice.main()
+    (eth_reserve, token_reserve) = uniprice.get_current_reserves()
+    exchange_rate = uniprice.calculate_exchange_rate(eth_reserve, token_reserve)   # noqa: E501
     logging.info(f"uniswap price: {exchange_rate}")
 
     price_ratio = 1 - oracle_price / exchange_rate
@@ -41,6 +42,13 @@ def main():
         logging.info("eth is undervalued on uniswap: BUY!")
     else:
         logging.info("uniswap price is accurate: HODL!")
+
+    recommended_purchase_amount = uniprice.how_much_eth_to_buy(
+        eth_reserve,
+        token_reserve,
+        oracle_price
+    )
+    print(f"Recommended Purchase Amount: {recommended_purchase_amount}")
 
 
 if __name__ == '__main__':

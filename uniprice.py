@@ -2,6 +2,7 @@
 NOTE: requires Infura api key stored in ./infura-provider-secret.txt
 """
 import json
+import math
 import os
 from pathlib import Path
 
@@ -78,7 +79,40 @@ def calculate_exchange_rate(eth_reserve, token_reserve):
     return rate if rate > 0 else 0
 
 
-def main(exchange_addr=USDC_EXCHANGE_ADDR):
+def how_much_eth_to_buy(current_eth_reserve, current_token_reserve, target_exchange_rate):   # noqa: E501
+    """
+
+    """
+    # TODO: why is this quadratic? is this correct?
+    # TODO: if it is correct, which one to pick, positive or negative?
+    input_eth_with_fee = 1 - PROVIDER_FEE_PERCENT
+    constant_product = current_eth_reserve * current_token_reserve
+
+    inside_sqrt = input_eth_with_fee**2 - 4*-(input_eth_with_fee * constant_product / target_exchange_rate)   # noqa: E501
+
+    positive_target_eth_reserve = (
+        -input_eth_with_fee + math.sqrt(inside_sqrt)
+        /
+        2
+    )
+
+    negative_target_eth_reserve = (
+        -input_eth_with_fee - math.sqrt(inside_sqrt)
+        /
+        2
+    )
+
+    return (
+        current_eth_reserve - positive_target_eth_reserve,
+        current_eth_reserve - negative_target_eth_reserve
+    )
+
+
+def how_much_token_to_buy():
+    pass
+
+
+def get_current_reserves(exchange_addr=USDC_EXCHANGE_ADDR):
     # api key doesn't seem to work/unnecessary under current security settings
     provider_secret = Path(__file__).parent / 'infura-provider-secret.txt'
     with provider_secret.open() as fp:
@@ -99,6 +133,11 @@ def main(exchange_addr=USDC_EXCHANGE_ADDR):
         abi = json.load(fp)
     contract = w3.eth.contract(address=address, abi=abi)
     (eth_reserve, token_reserve) = calculate_pool(w3, contract)
+    return (eth_reserve, token_reserve)
+
+
+def main():
+    (eth_reserve, token_reserve) = get_current_reserves()
     exchange_rate = calculate_exchange_rate(eth_reserve, token_reserve)
     return exchange_rate
 
@@ -106,5 +145,5 @@ def main(exchange_addr=USDC_EXCHANGE_ADDR):
 if __name__ == '__main__':
     # print(calculate_dataset())
     # print(main(DAI_EXCHANGE_ADDR))
-    print(main(USDC_EXCHANGE_ADDR))
+    print(main())
     # print(main('0x4e395304655F0796bc3bc63709DB72173b9DdF98'))
