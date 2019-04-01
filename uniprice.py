@@ -81,10 +81,31 @@ def calculate_exchange_rate(eth_reserve, token_reserve):
 
 def how_much_eth_to_buy(current_eth_reserve, current_token_reserve, target_exchange_rate):   # noqa: E501
     """
-    this doesn't seem correct...
+
     """
-    numerator = (target_exchange_rate * current_eth_reserve * 1000 - 1)
-    return numerator / 997 - current_token_reserve
+    # TODO: why is this quadratic? is this correct?
+    # TODO: if it is correct, which one to pick, positive or negative?
+    input_eth_with_fee = 1 - PROVIDER_FEE_PERCENT
+    constant_product = current_eth_reserve * current_token_reserve
+
+    inside_sqrt = input_eth_with_fee**2 - 4*-(input_eth_with_fee * constant_product / target_exchange_rate)   # noqa: E501
+
+    positive_target_eth_reserve = (
+        -input_eth_with_fee + math.sqrt(inside_sqrt)
+        /
+        2
+    )
+
+    negative_target_eth_reserve = (
+        -input_eth_with_fee - math.sqrt(inside_sqrt)
+        /
+        2
+    )
+
+    return (
+        current_eth_reserve - positive_target_eth_reserve,
+        current_eth_reserve - negative_target_eth_reserve
+    )
 
 
 def how_much_token_to_buy():
