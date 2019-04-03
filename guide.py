@@ -31,6 +31,8 @@ def main():
     logging.info(f"oracle price: {oracle_price}")
 
     (eth_reserve, token_reserve) = uniprice.get_current_reserves()
+    logging.info(f"Current ETH Reserve: {eth_reserve}")
+    logging.info(f"Current Token Reserve: {token_reserve}")
     exchange_rate = uniprice.calculate_exchange_rate(eth_reserve, token_reserve)   # noqa: E501
     logging.info(f"uniswap price: {exchange_rate}")
 
