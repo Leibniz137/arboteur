@@ -9,10 +9,14 @@ import uniprice
 
 logging.basicConfig(level=logging.INFO)
 
+
+# TODO: expected gross and expected profit
+
 # Total transaction fees
 # uniswap + coinbase + gas
 UNISWAP_TRANSACTION_FEE = 0.003
 
+# this is an additional expected fee. TODO: is this accurate?
 COINBASE_SPREAD = 0.005
 
 # assuming the total transaction amount > $200 to avoid flat fee
