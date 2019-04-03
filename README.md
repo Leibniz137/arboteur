@@ -21,3 +21,7 @@ median of:
 - coinmarket cap: https://api.coinmarketcap.com/v1/ticker/ethereum/
 - coinbase api
 - etherscan: https://api.etherscan.io/api?module=stats&action=ethprice&apikey=YourApiKeyToken
+
+# see also:
+- [uniprice](https://github.com/SpankChain/uniprice)
+- [uniswap docs](https://docs.uniswap.io/)
