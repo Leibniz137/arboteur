@@ -21,6 +21,7 @@ import uniswap
 # LATEST_BLOCK = 7535973
 LATEST_BLOCK = 7200000
 PROVIDER_URI = 'https://mainnet.infura.io'
+DAI_TOKEN_ADDR = '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359'
 
 
 def extract_input(exchange, txhash):
@@ -41,6 +42,7 @@ if __name__ == '__main__':
     token_to_token_transfers = [
         input_ for input_ in inputs if input_[0].fn_name.startswith('tokenToToken')   # noqa: E501
     ]
+    dai_swaps = [input_ for input_ in token_to_token_transfers if input_[1]['token_addr'] == DAI_TOKEN_ADDR]   # noqa: E501
     import pdb; pdb.set_trace()
 
     # for event in events.tokenToTokenSwapOutput(fromBlock=init_block):
