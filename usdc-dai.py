@@ -116,11 +116,11 @@ if __name__ == '__main__':
     dai_exchange = uniswap.Exchange(uniswap.DAI_EXCHANGE_ADDR, conn)
 
     thisdir = pathlib.Path(__file__).parent
-    usdc_exchange_csv = thisdir / f'export-{uniswap.USDC_EXCHANGE_ADDR}-jan1st.csv'   # noqa: E501
+    usdc_exchange_csv = thisdir / f'export-{uniswap.USDC_EXCHANGE_ADDR}-march1st.csv'   # noqa: E501
     usdc_exchange_output_pickle = thisdir / 'usdc_to_dai_swaps.pickle'
 
     # NOTE: dai exchange data only goes to feb22 due to higher volume
-    dai_exchange_csv = thisdir / f'export-{uniswap.DAI_EXCHANGE_ADDR}-jan1st.csv'   # noqa: E501
+    dai_exchange_csv = thisdir / f'export-{uniswap.DAI_EXCHANGE_ADDR}-march1st.csv'   # noqa: E501
     dai_exchange_output_pickle = thisdir / 'dai_to_usdc_swaps.pickle'
 
     get_swaps(
