@@ -84,8 +84,9 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
     def get_input(row):
         try:
             return exchange.contract.decode_function_input(row['transaction'].input)   # noqa: E501
-        except Exception as e:
-            print(e)
+        except ValueError as e:
+            logging.debug(e)
+            # "Could not find any function with matching selector"
             return (web3.contract.ContractFunction(), {})
 
     df['transaction'] = df.apply(get_tx, axis=1)
