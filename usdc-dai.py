@@ -48,7 +48,7 @@ if __name__ == '__main__':
     df['transaction'] = df.apply(get_tx, axis=1)
     df['input'] = df.apply(lambda x: exchange.contract.decode_function_input(x['transaction'].input), axis=1)   # noqa: E501
     df['fn_name'] = df.apply(lambda x: x['input'][0].fn_name, axis=1)
-    df['token_addr'] = df.apply(lambda x: x['input'][1]['token_addr'], axis=1)
+    df['token_addr'] = df.apply(lambda x: x['input'][1].get('token_addr'), axis=1)
 
     # uniswap uscd to dai
     dai_swaps = df.loc[df.token_addr == DAI_TOKEN_ADDR]
