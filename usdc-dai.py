@@ -100,7 +100,7 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
         """
         return exchange.contract.decode_function_input(row['transaction'].input)[1]   # noqa: E501
 
-    swaps = df.loc[df.token_addr == token_addr]
+    swaps = df.loc[df.token_addr == token_addr].copy()
     swaps['input'] = swaps.apply(get_pickleable_input, axis=1)
     swaps.to_pickle(pickle_path)
 
