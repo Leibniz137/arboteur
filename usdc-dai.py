@@ -49,6 +49,7 @@ ValueError: ('Could not find any function with matching selector', 'occurred at 
 import pathlib
 
 import pandas as pd
+import web3
 
 import web3_infura
 import uniswap
@@ -80,7 +81,11 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
         return exchange.conn.w3.eth.getTransaction(row['Txhash'])
 
     def get_input(row):
-        return exchange.contract.decode_function_input(row['transaction'].input)   # noqa: E501
+        try:
+            return exchange.contract.decode_function_input(row['transaction'].input)   # noqa: E501
+        except Exception as e:
+            print(e)
+            return (web3.contract.ContractFunction(), {})
 
     df['transaction'] = df.apply(get_tx, axis=1)
     df['input'] = df.apply(get_input, axis=1)
