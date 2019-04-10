@@ -1,4 +1,3 @@
-ethereumetl
 pandas
 requests
 web3
