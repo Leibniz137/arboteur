@@ -24,6 +24,7 @@ import uniswap
 LATEST_BLOCK = 7200000
 PROVIDER_URI = 'https://mainnet.infura.io'
 DAI_TOKEN_ADDR = '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359'
+USDC_TOKEN_ADDR = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 
 
 def get_swaps(exchange, token_addr, csv_path, pickle_path):
@@ -61,17 +62,30 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
 
     usdc_to_dai_swaps = df.loc[df.token_addr == DAI_TOKEN_ADDR]
     usdc_to_dai_swaps['input'] = usdc_to_dai_swaps.apply(get_pickleable_input, axis=1)   # noqa: E501
-    import pdb; pdb.set_trace()
     usdc_to_dai_swaps.to_pickle(pickle_path)
 
 
 if __name__ == '__main__':
     conn = web3_infura.Connection()
-    exchange = uniswap.Exchange(uniswap.USDC_EXCHANGE_ADDR, conn)
-    events = exchange.contract.events
-    init_block = uniswap.USDC_MARKET_CREATION_BLOCK
+    usdc_exchange = uniswap.Exchange(uniswap.USDC_EXCHANGE_ADDR, conn)
+    dai_exchange = uniswap.Exchange(uniswap.DAI_EXCHANGE_ADDR, conn)
 
     thisdir = pathlib.Path(__file__).parent
-    path = thisdir / 'export-0x97dec872013f6b5fb443861090ad931542878126-jan1st.csv'   # noqa: E501
-    pickle_path = thisdir / 'usdc_to_dai_swaps.pickle'
-    get_swaps(exchange, DAI_TOKEN_ADDR, path, pickle_path)
+    usdc_exchange_csv = thisdir / f'export-{uniswap.USDC_EXCHANGE_ADDR}-jan1st.csv'   # noqa: E501
+    usdc_exchange_output_pickle = thisdir / 'usdc_to_dai_swaps.pickle'
+
+    # NOTE: dai exchange data only goes to feb22 due to higher volume
+    dai_exchange_csv = thisdir / f'export-{uniswap.DAI_EXCHANGE_ADDR}-jan1st.csv'   # noqa: E501
+    dai_exchange_output_pickle = thisdir / 'dai_to_usdc_swaps.pickle'
+
+    get_swaps(
+        usdc_exchange,
+        DAI_TOKEN_ADDR,
+        usdc_exchange_csv,
+        usdc_exchange_output_pickle)
+
+    get_swaps(
+        dai_exchange,
+        USDC_TOKEN_ADDR,
+        dai_exchange_csv,
+        dai_exchange_output_pickle)
