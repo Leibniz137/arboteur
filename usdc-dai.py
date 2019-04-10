@@ -38,18 +38,32 @@ if __name__ == '__main__':
     events = exchange.contract.events
     init_block = uniswap.USDC_MARKET_CREATION_BLOCK
 
-    path = pathlib.Path(__file__).parent / 'export-0x97dec872013f6b5fb443861090ad931542878126-jan1st.csv'   # noqa: E501
+    thisdir = pathlib.Path(__file__).parent
+    path = thisdir / 'export-0x97dec872013f6b5fb443861090ad931542878126-jan1st.csv'   # noqa: E501
 
     # dont use txhash as index (it is a number...)
     df = pd.read_csv(path, index_col=False)
 
     def get_tx(row):
         return exchange.conn.w3.eth.getTransaction(row['Txhash'])
-    df['transaction'] = df.apply(get_tx, axis=1)
-    df['input'] = df.apply(lambda x: exchange.contract.decode_function_input(x['transaction'].input), axis=1)   # noqa: E501
-    df['fn_name'] = df.apply(lambda x: x['input'][0].fn_name, axis=1)
-    df['token_addr'] = df.apply(lambda x: x['input'][1].get('token_addr'), axis=1)
 
-    # uniswap uscd to dai
+    def get_input(row):
+        return exchange.contract.decode_function_input(row['transaction'].input)   # noqa: E501
+
+    df['transaction'] = df.apply(get_tx, axis=1)
+    df['input'] = df.apply(get_input, axis=1)
+    df['fn_name'] = df.apply(lambda x: x['input'][0].fn_name, axis=1)
+    df['token_addr'] = df.apply(lambda x: x['input'][1].get('token_addr'), axis=1)   # noqa: E501
+
+    def get_pickleable_input(row):
+        """
+        function type isn't serializable, so drop it
+
+        input rows are (function, AttributeDict) 2-tuples
+        """
+        return exchange.contract.decode_function_input(row['transaction'].input)[1]   # noqa: E501
+
     dai_swaps = df.loc[df.token_addr == DAI_TOKEN_ADDR]
+    dai_swaps['input'] = dai_swaps.apply(get_pickleable_input, axis=1)
     import pdb; pdb.set_trace()
+    dai_swaps.to_pickle(thisdir / 'dai_swaps.pickle')
