@@ -46,6 +46,7 @@ Traceback (most recent call last):
     'Could not find any function with matching {0}'.format(identifier)
 ValueError: ('Could not find any function with matching selector', 'occurred at index 2568')
 """
+import logging
 import pathlib
 
 import pandas as pd
@@ -101,8 +102,11 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
         return exchange.contract.decode_function_input(row['transaction'].input)[1]   # noqa: E501
 
     swaps = df.loc[df.token_addr == token_addr].copy()
-    swaps['input'] = swaps.apply(get_pickleable_input, axis=1)
-    swaps.to_pickle(pickle_path)
+    if not swaps.empty:
+        swaps['input'] = swaps.apply(get_pickleable_input, axis=1)
+        swaps.to_pickle(pickle_path)
+    else:
+        logging.warning(f"NO {token_addr} TRANSACTIONS FOUND")
 
 
 if __name__ == '__main__':
