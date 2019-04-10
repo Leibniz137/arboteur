@@ -60,9 +60,9 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
         """
         return exchange.contract.decode_function_input(row['transaction'].input)[1]   # noqa: E501
 
-    usdc_to_dai_swaps = df.loc[df.token_addr == DAI_TOKEN_ADDR]
-    usdc_to_dai_swaps['input'] = usdc_to_dai_swaps.apply(get_pickleable_input, axis=1)   # noqa: E501
-    usdc_to_dai_swaps.to_pickle(pickle_path)
+    swaps = df.loc[df.token_addr == token_addr]
+    swaps['input'] = swaps.apply(get_pickleable_input, axis=1)
+    swaps.to_pickle(pickle_path)
 
 
 if __name__ == '__main__':
