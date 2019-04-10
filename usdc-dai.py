@@ -26,21 +26,17 @@ PROVIDER_URI = 'https://mainnet.infura.io'
 DAI_TOKEN_ADDR = '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359'
 
 
-def extract_input(exchange, txhash):
-    tx = exchange.conn.w3.eth.getTransaction(txhash)
-    input_ = exchange.contract.decode_function_input(tx.input)
-    return input_
+def get_swaps(exchange, token_addr, csv_path, pickle_path):
+    """
+    get data on swapping the token of a given exchange for another token
 
+    args:
+      exchange: uniswap for input token
+      token_addr: address of output token
+      csv_path: path to etherscan transaction dataset for given exchange
 
-if __name__ == '__main__':
-    conn = web3_infura.Connection()
-    exchange = uniswap.Exchange(uniswap.USDC_EXCHANGE_ADDR, conn)
-    events = exchange.contract.events
-    init_block = uniswap.USDC_MARKET_CREATION_BLOCK
-
-    thisdir = pathlib.Path(__file__).parent
-    path = thisdir / 'export-0x97dec872013f6b5fb443861090ad931542878126-jan1st.csv'   # noqa: E501
-
+    outputs pickled file at pickle_path
+    """
     # dont use txhash as index (it is a number...)
     df = pd.read_csv(path, index_col=False)
 
@@ -63,7 +59,19 @@ if __name__ == '__main__':
         """
         return exchange.contract.decode_function_input(row['transaction'].input)[1]   # noqa: E501
 
-    dai_swaps = df.loc[df.token_addr == DAI_TOKEN_ADDR]
-    dai_swaps['input'] = dai_swaps.apply(get_pickleable_input, axis=1)
+    usdc_to_dai_swaps = df.loc[df.token_addr == DAI_TOKEN_ADDR]
+    usdc_to_dai_swaps['input'] = usdc_to_dai_swaps.apply(get_pickleable_input, axis=1)   # noqa: E501
     import pdb; pdb.set_trace()
-    dai_swaps.to_pickle(thisdir / 'dai_swaps.pickle')
+    usdc_to_dai_swaps.to_pickle(pickle_path)
+
+
+if __name__ == '__main__':
+    conn = web3_infura.Connection()
+    exchange = uniswap.Exchange(uniswap.USDC_EXCHANGE_ADDR, conn)
+    events = exchange.contract.events
+    init_block = uniswap.USDC_MARKET_CREATION_BLOCK
+
+    thisdir = pathlib.Path(__file__).parent
+    path = thisdir / 'export-0x97dec872013f6b5fb443861090ad931542878126-jan1st.csv'   # noqa: E501
+    pickle_path = thisdir / 'usdc_to_dai_swaps.pickle'
+    get_swaps(exchange, DAI_TOKEN_ADDR, path, pickle_path)
