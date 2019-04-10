@@ -38,7 +38,7 @@ def get_swaps(exchange, token_addr, csv_path, pickle_path):
     outputs pickled file at pickle_path
     """
     # dont use txhash as index (it is a number...)
-    df = pd.read_csv(path, index_col=False)
+    df = pd.read_csv(csv_path, index_col=False)
 
     def get_tx(row):
         return exchange.conn.w3.eth.getTransaction(row['Txhash'])
