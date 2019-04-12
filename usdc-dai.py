@@ -1,4 +1,8 @@
 """
+Loads etherscan csv files into pandas dataframes
+with additional transasction data added via web3py/infura queries.
+
+
 public contract methods
 
 swap:
@@ -10,41 +14,6 @@ transfer:
 - tokenToTokenTransferOutput
 
 assumption: we don't need to consider private contract methods
-
-
-TODO:
-usdc-dai.py:64: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
-  swaps['input'] = swaps.apply(get_pickleable_input, axis=1)
-Traceback (most recent call last):
-  File "usdc-dai.py", line 91, in <module>
-    dai_exchange_output_pickle)
-  File "usdc-dai.py", line 51, in get_swaps
-    df['input'] = df.apply(get_input, axis=1)
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/pandas/core/frame.py", line 6487, in apply
-    return op.get_result()
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/pandas/core/apply.py", line 151, in get_result
-    return self.apply_standard()
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/pandas/core/apply.py", line 257, in apply_standard
-    self.apply_series_generator()
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/pandas/core/apply.py", line 286, in apply_series_generator
-    results[i] = self.f(v)
-  File "usdc-dai.py", line 48, in get_input
-    return exchange.contract.decode_function_input(row['transaction'].input)   # noqa: E501
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/web3/utils/decorators.py", line 14, in _wrapper
-    return self.method(obj, *args, **kwargs)
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/web3/contract.py", line 692, in decode_function_input
-    func = self.get_function_by_selector(selector)
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/web3/utils/decorators.py", line 14, in _wrapper
-    return self.method(obj, *args, **kwargs)
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/web3/contract.py", line 686, in get_function_by_selector
-    return get_function_by_identifier(fns, 'selector')
-  File "/Users/nathaniel/.virtualenvs/arboteur/lib/python3.7/site-packages/web3/contract.py", line 1541, in get_function_by_identifier
-    'Could not find any function with matching {0}'.format(identifier)
-ValueError: ('Could not find any function with matching selector', 'occurred at index 2568')
 """
 import logging
 import pathlib
