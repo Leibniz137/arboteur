@@ -2,6 +2,8 @@ import statistics
 
 import requests
 
+# hi tram!
+
 
 def coinbase_price():
     url = 'https://api.coinbase.com/v2/exchange-rates?currency=eth'
